@@ -7,7 +7,7 @@ import (
 	"github.com/JI-0/private-cryptocurrency/blockchain"
 )
 
-// Test creation of chain
+// Test creation of chain and POW
 func TestCreationOfChainAndBlocks(t *testing.T) {
 	chain := blockchain.NewChain()
 	chain.AddBlock("data0")
@@ -18,8 +18,10 @@ func TestCreationOfChainAndBlocks(t *testing.T) {
 		fmt.Printf("Prev hash: %x\n", block.PrevHash)
 		fmt.Printf("Data: %s\n", block.Data)
 		fmt.Printf("Hash: %x\n", block.Hash)
-		// if block.Data == []byte("genesis") {
 
-		// }
+		pow := blockchain.NewProof(block)
+		if !pow.Validate() {
+			t.Fatalf(`Proof of work returned invalid`)
+		}
 	}
 }
