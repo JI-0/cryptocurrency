@@ -1,7 +1,7 @@
-package main
+package blockchain
 
 type Chain struct {
-	blocks []*Block
+	Blocks []*Block
 }
 
 func Genesis() *Block {
@@ -12,8 +12,8 @@ func NewChain() *Chain {
 	return &Chain{[]*Block{Genesis()}}
 }
 
-func (c *Chain) addBlock(data string) {
-	prevBlock := c.blocks[len(c.blocks)-1]
+func (c *Chain) AddBlock(data string) {
+	prevBlock := c.Blocks[len(c.Blocks)-1]
 	newBlock := NewBlock(data, prevBlock.Hash)
-	c.blocks = append(c.blocks, newBlock)
+	c.Blocks = append(c.Blocks, newBlock)
 }
