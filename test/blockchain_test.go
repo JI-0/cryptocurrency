@@ -14,7 +14,10 @@ func TestCreationOfChainAndBlocks(t *testing.T) {
 	chain.AddBlock("data1")
 	chain.AddBlock("data2")
 
-	for _, block := range chain.Blocks {
+	iterator := chain.Iterator()
+	for {
+		block := iterator.Next()
+
 		fmt.Printf("Prev hash: %x\n", block.PrevHash)
 		fmt.Printf("Data: %s\n", block.Data)
 		fmt.Printf("Hash: %x\n", block.Hash)
@@ -22,6 +25,10 @@ func TestCreationOfChainAndBlocks(t *testing.T) {
 		pow := blockchain.NewProof(block)
 		if !pow.Validate() {
 			t.Fatalf(`Proof of work returned invalid`)
+		}
+
+		if len(block.PrevHash) == 0 {
+			break
 		}
 	}
 }
