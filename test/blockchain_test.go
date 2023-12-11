@@ -17,10 +17,54 @@ func TestCreationOfChainAndBlocks(t *testing.T) {
 		t.Fatal("Database file error: ", err)
 	}
 	//Start test
-	chain := blockchain.NewChain("")
-	// chain.AddBlock("data0")
-	// chain.AddBlock("data1")
-	// chain.AddBlock("data2")
+	//Create chain
+	chain := blockchain.NewChain("Tester-0")
+	defer chain.Database.Close()
+	//Get balance
+	balance := 0
+	UTXOs := chain.FindUTXO("Tester-0")
+	for _, out := range UTXOs {
+		balance += out.Value
+	}
+	fmt.Printf("Balance of %s: %d\n", "Tester-0", balance)
+	//Send amount 20
+	tx := blockchain.NewTransaction("Tester-0", "Tester-1", 20, chain)
+	chain.AddBlock([]*blockchain.Transaction{tx})
+	fmt.Println("Sent amount 20")
+	//Get balances
+	//Get balance
+	balance = 0
+	UTXOs = chain.FindUTXO("Tester-0")
+	for _, out := range UTXOs {
+		balance += out.Value
+	}
+	fmt.Printf("Balance of %s: %d\n", "Tester-0", balance)
+	//Get balance
+	balance = 0
+	UTXOs = chain.FindUTXO("Tester-1")
+	for _, out := range UTXOs {
+		balance += out.Value
+	}
+	fmt.Printf("Balance of %s: %d\n", "Tester-1", balance)
+	//Send amount 80
+	tx = blockchain.NewTransaction("Tester-0", "Tester-1", 80, chain)
+	chain.AddBlock([]*blockchain.Transaction{tx})
+	fmt.Println("Sent amount 80")
+	//Get balances
+	//Get balance
+	balance = 0
+	UTXOs = chain.FindUTXO("Tester-0")
+	for _, out := range UTXOs {
+		balance += out.Value
+	}
+	fmt.Printf("Balance of %s: %d\n", "Tester-0", balance)
+	//Get balance
+	balance = 0
+	UTXOs = chain.FindUTXO("Tester-1")
+	for _, out := range UTXOs {
+		balance += out.Value
+	}
+	fmt.Printf("Balance of %s: %d\n", "Tester-1", balance)
 
 	iterator := chain.Iterator()
 	for {
