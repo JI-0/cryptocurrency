@@ -64,11 +64,6 @@ func NewChain(address string) *Chain {
 			return err
 		} else if err != nil {
 			return err
-			// } else {
-			// 	item.Value(func(val []byte) error {
-			// 		lastHash = val
-			// 		return nil
-			// 	})
 		}
 		return nil
 	}); err != nil {
@@ -96,8 +91,6 @@ func ContinueChain(address string) *Chain {
 	if err := db.Update(func(txn *badger.Txn) error {
 		if item, err := txn.Get([]byte("lh")); err != nil {
 			return err
-			// } else if err != nil {
-			// 	return err
 		} else {
 			item.Value(func(val []byte) error {
 				lastHash = val
