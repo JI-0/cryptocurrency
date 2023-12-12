@@ -6,7 +6,6 @@ import (
 	"crypto/rand"
 	"crypto/sha512"
 	"fmt"
-	"log"
 
 	"golang.org/x/crypto/ripemd160"
 )
@@ -26,7 +25,7 @@ func NewKeyPair() (ecdsa.PrivateKey, []byte) {
 
 	private, err := ecdsa.GenerateKey(curve, rand.Reader)
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 	public := append(private.PublicKey.X.Bytes(), private.PublicKey.Y.Bytes()...)
 
@@ -43,7 +42,7 @@ func PublicKeyHash(publicKey []byte) []byte {
 
 	hasher := ripemd160.New()
 	if _, err := hasher.Write(publicKeyHash[:]); err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 	publicRipeMD := hasher.Sum(nil)
 

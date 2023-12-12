@@ -6,7 +6,6 @@ import (
 	"encoding/gob"
 	"encoding/hex"
 	"fmt"
-	"log"
 )
 
 type Transaction struct {
@@ -32,7 +31,7 @@ func (tx *Transaction) SetID() {
 
 	encoder := gob.NewEncoder(&encoded)
 	if err := encoder.Encode(tx); err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 	hash = sha512.Sum512(encoded.Bytes())
 	tx.ID = hash[:]
@@ -70,12 +69,12 @@ func NewTransaction(from, to string, amount int, chain *Chain) *Transaction {
 
 	acc, validOutputs := chain.FindSpendableOutputs(from, amount)
 	if acc < amount {
-		log.Panic("Fund error")
+		panic("Fund error")
 	}
 	for txid, outs := range validOutputs {
 		txID, err := hex.DecodeString(txid)
 		if err != nil {
-			log.Panic(err)
+			panic(err)
 		}
 		for _, out := range outs {
 			input := TransactionInput{txID, out, from}

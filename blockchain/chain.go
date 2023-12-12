@@ -3,7 +3,6 @@ package blockchain
 import (
 	"encoding/hex"
 	"fmt"
-	"log"
 	"os"
 	"runtime"
 
@@ -48,7 +47,7 @@ func NewChain(address string) *Chain {
 
 	db, err := badger.Open(opts)
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 
 	if err := db.Update(func(txn *badger.Txn) error {
@@ -67,7 +66,7 @@ func NewChain(address string) *Chain {
 		}
 		return nil
 	}); err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 
 	blockchain := Chain{lastHash, db}
@@ -85,7 +84,7 @@ func ContinueChain(address string) *Chain {
 
 	db, err := badger.Open(opts)
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 
 	if err := db.Update(func(txn *badger.Txn) error {
@@ -99,7 +98,7 @@ func ContinueChain(address string) *Chain {
 		}
 		return nil
 	}); err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 
 	blockchain := Chain{lastHash, db}
@@ -119,7 +118,7 @@ func (c *Chain) AddBlock(transactions []*Transaction) {
 		})
 		return nil
 	}); err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 
 	newBlock := NewBlock(transactions, lastHash)
@@ -134,7 +133,7 @@ func (c *Chain) AddBlock(transactions []*Transaction) {
 		c.LastHash = newBlock.Hash
 		return nil
 	}); err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 }
 
@@ -237,7 +236,7 @@ func (it *ChainIterator) Next() *Block {
 		})
 		return nil
 	}); err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 	it.CurrentHash = block.PrevHash
 	return block

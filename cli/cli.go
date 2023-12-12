@@ -3,7 +3,6 @@ package cli
 import (
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"runtime"
 	"strconv"
@@ -91,19 +90,19 @@ func (cli *CommandLine) Run() {
 	switch os.Args[1] {
 	case "createChain":
 		if err := createChainCmd.Parse(os.Args[2:]); err != nil {
-			log.Panic(err)
+			panic(err)
 		}
 	case "printChain":
 		if err := printChainCmd.Parse(os.Args[2:]); err != nil {
-			log.Panic(err)
+			panic(err)
 		}
 	case "getBalance":
 		if err := getBalanceCmd.Parse(os.Args[2:]); err != nil {
-			log.Panic(err)
+			panic(err)
 		}
 	case "send":
 		if err := sendCmd.Parse(os.Args[2:]); err != nil {
-			log.Panic(err)
+			panic(err)
 		}
 	default:
 		cli.printUsage()

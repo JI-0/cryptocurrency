@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"crypto/sha512"
 	"encoding/gob"
-	"log"
 )
 
 type Block struct {
@@ -42,7 +41,7 @@ func (b *Block) Serialize() []byte {
 	encoder := gob.NewEncoder(&res)
 
 	if err := encoder.Encode(b); err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 
 	return res.Bytes()
@@ -53,7 +52,7 @@ func (b *Block) Deserialize(data []byte) *Block {
 	decoder := gob.NewDecoder(bytes.NewReader(data))
 
 	if err := decoder.Decode(&block); err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 
 	return &block
