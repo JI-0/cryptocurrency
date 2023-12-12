@@ -1,7 +1,9 @@
 package test
 
 import (
+	"crypto/x509"
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/JI-0/private-cryptocurrency/wallet"
@@ -9,6 +11,7 @@ import (
 )
 
 const (
+	walletFile     = "./tmp/wallets/"
 	version        = byte(0x00)
 	numberOfWalets = 100000
 )
@@ -46,4 +49,47 @@ func TestWalletCreationAndAddressGeneration(t *testing.T) {
 
 		addresses = append(addresses, string(address))
 	}
+}
+
+func TestWalletCreationAndSavingLoading(t *testing.T) {
+	// Delete save file from previous test
+	if err := os.RemoveAll(walletFile); err != nil {
+		t.Fatal("Wallet file error: ", err)
+	}
+	if err := os.Mkdir(walletFile, 0700); err != nil {
+		t.Fatal("Cannot create dir")
+	}
+	//Create wallets and load them
+	wallets, err := wallet.NewWallets()
+	if err != nil {
+		t.Fatal(err)
+	}
+	address := wallets.AddWallet()
+	wallets.Save()
+	println("New address: %s", address)
+	wallets1, err := wallet.NewWallets()
+	if err != nil {
+		t.Fatal(err)
+	}
+	//Check public key match
+	if string(wallets.Wallets[address].PublicKey) != string(wallets1.Wallets[address].PublicKey) {
+		t.Fatal("Public keys do not match")
+	}
+	//Check private key match
+	privateKeyBuffer, err := x509.MarshalECPrivateKey(&wallets.Wallets[address].PrivateKey)
+	if err != nil {
+		t.Fatal(err)
+	}
+	privateKeyBuffer1, err := x509.MarshalECPrivateKey(&wallets1.Wallets[address].PrivateKey)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(privateKeyBuffer) != string(privateKeyBuffer1) {
+		t.Fatal("Private keys do not match")
+	}
+
+	fmt.Printf("Wallet1 public key: %s\n", string(wallets.Wallets[address].PublicKey))
+	fmt.Printf("Wallet2 public key: %s\n", string(wallets1.Wallets[address].PublicKey))
+	fmt.Printf("Wallet1 private key: %s\n", string(privateKeyBuffer))
+	fmt.Printf("Wallet2 private key: %s\n", string(privateKeyBuffer1))
 }

@@ -37,6 +37,10 @@ func NewWallet() *Wallet {
 	return &Wallet{private, public}
 }
 
+func OpenWallet(privateKey ecdsa.PrivateKey, publicKey []byte) *Wallet {
+	return &Wallet{privateKey, publicKey}
+}
+
 func PublicKeyHash(publicKey []byte) []byte {
 	publicKeyHash := sha512.Sum512(publicKey)
 
@@ -55,7 +59,7 @@ func CheckSum(payload []byte) []byte {
 	return hash2[:checksumLen]
 }
 
-func (w *Wallet) Address() []byte {
+func (w Wallet) Address() []byte {
 	publicHash := PublicKeyHash(w.PublicKey)
 	versionedHash := append([]byte{version}, publicHash...)
 	checksum := CheckSum(versionedHash)

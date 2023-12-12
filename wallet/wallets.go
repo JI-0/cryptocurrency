@@ -1,13 +1,12 @@
 package wallet
 
 import (
-	"bytes"
-	"crypto/elliptic"
-	"encoding/gob"
+	"crypto/x509"
 	"os"
+	"strings"
 )
 
-const walletsFile = "./tmp/wallets.data"
+const walletsFile = "./tmp/wallets/" //.data"
 
 type Wallets struct {
 	Wallets map[string]*Wallet
@@ -40,35 +39,47 @@ func (ws *Wallets) GetAllAddresses() []string {
 }
 
 func (ws *Wallets) Save() {
-	var content bytes.Buffer
-
-	gob.Register(elliptic.P521())
-	encoder := gob.NewEncoder(&content)
-	if err := encoder.Encode(ws); err != nil {
-		panic(err)
-	}
-	if err := os.WriteFile(walletsFile, content.Bytes(), 0644); err != nil {
-		panic(err)
+	for address, wallet := range ws.Wallets {
+		privateKeyBuffer, err := x509.MarshalECPrivateKey(&wallet.PrivateKey)
+		if err != nil {
+			panic(err)
+		}
+		if err := os.WriteFile(walletsFile+address+".priv", privateKeyBuffer, 0644); err != nil {
+			panic(err)
+		}
+		if err := os.WriteFile(walletsFile+address+".pub", wallet.PublicKey, 0644); err != nil {
+			panic(err)
+		}
 	}
 }
 
 func (ws *Wallets) Load() error {
-	if _, err := os.Stat(walletsFile); os.IsNotExist(err) {
-		return err
-	}
-
-	var wallets Wallets
-	fileContent, err := os.ReadFile(walletsFile)
+	files, err := os.ReadDir(walletsFile)
 	if err != nil {
 		return err
 	}
-
-	gob.Register(elliptic.P521())
-	decoder := gob.NewDecoder(bytes.NewReader(fileContent))
-	if err := decoder.Decode(&wallets); err != nil {
-		return err
+	for _, file := range files {
+		name := file.Name()
+		if strings.Contains(name, ".priv") {
+			address := name[:strings.IndexByte(name, '.')]
+			println("HERE", address)
+			privateKeyBuffer, err := os.ReadFile(walletsFile + address + ".priv")
+			if err != nil {
+				println("CRASH1", err.Error())
+				continue
+			}
+			privateKey, err := x509.ParseECPrivateKey(privateKeyBuffer)
+			if err != nil {
+				println("CRASH2", err.Error())
+				continue
+			}
+			publicKey, err := os.ReadFile(walletsFile + address + ".pub")
+			if err != nil {
+				println("CRASH3", err.Error())
+				continue
+			}
+			ws.Wallets[address] = OpenWallet(*privateKey, publicKey)
+		}
 	}
-
-	ws.Wallets = wallets.Wallets
 	return nil
 }
