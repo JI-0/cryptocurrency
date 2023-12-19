@@ -116,7 +116,8 @@ func (cli *CommandLine) send(from, to string, amount int) {
 	UTXOSet := blockchain.UTXOSet{Chain: chain}
 
 	tx := blockchain.NewTransaction(from, to, amount, &UTXOSet)
-	block := chain.AddBlock([]*blockchain.Transaction{tx})
+	cbTx := blockchain.CoinbaseTransaction(from, "")
+	block := chain.AddBlock([]*blockchain.Transaction{tx, cbTx})
 	UTXOSet.Update(block)
 	fmt.Println("Sent amount")
 }

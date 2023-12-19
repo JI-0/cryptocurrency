@@ -39,7 +39,11 @@ type TransactionInput struct {
 
 func CoinbaseTransaction(to, data string) *Transaction {
 	if data == "" {
-		data = fmt.Sprintf("coins to %s", to)
+		randData := make([]byte, 512)
+		if _, err := rand.Read(randData); err != nil {
+			panic(err)
+		}
+		data = fmt.Sprintf("%x", randData)
 	}
 
 	txin := TransactionInput{[]byte{}, -1, nil, []byte(data)}

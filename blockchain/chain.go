@@ -142,30 +142,6 @@ func (c *Chain) AddBlock(transactions []*Transaction) *Block {
 	return newBlock
 }
 
-func (c *Chain) SignTransaction(tx *Transaction, privateKey ecdsa.PrivateKey) {
-	previousTxs := make(map[string]Transaction)
-	for _, input := range tx.Inputs {
-		previousTx, err := c.FindTransaction(input.ID)
-		if err != nil {
-			panic(err)
-		}
-		previousTxs[hex.EncodeToString(previousTx.ID)] = previousTx
-	}
-	tx.Sign(privateKey, previousTxs)
-}
-
-func (c *Chain) VerifyTransaction(tx *Transaction) bool {
-	previousTxs := make(map[string]Transaction)
-	for _, input := range tx.Inputs {
-		previousTx, err := c.FindTransaction(input.ID)
-		if err != nil {
-			panic(err)
-		}
-		previousTxs[hex.EncodeToString(previousTx.ID)] = previousTx
-	}
-	return tx.Verify(previousTxs)
-}
-
 func (c *Chain) FindTransaction(ID []byte) (Transaction, error) {
 	iter := c.Iterator()
 	for {
@@ -220,6 +196,35 @@ func (c *Chain) FindUTXOs() map[string]TransactionOutputs {
 	}
 
 	return UTXOs
+}
+
+func (c *Chain) SignTransaction(tx *Transaction, privateKey ecdsa.PrivateKey) {
+	previousTxs := make(map[string]Transaction)
+	for _, input := range tx.Inputs {
+		previousTx, err := c.FindTransaction(input.ID)
+		if err != nil {
+			panic(err)
+		}
+		previousTxs[hex.EncodeToString(previousTx.ID)] = previousTx
+	}
+	tx.Sign(privateKey, previousTxs)
+}
+
+func (c *Chain) VerifyTransaction(tx *Transaction) bool {
+	//Verification due to mining
+	if tx.IsCoinbaseTransaction() {
+		return true
+	}
+
+	previousTxs := make(map[string]Transaction)
+	for _, input := range tx.Inputs {
+		previousTx, err := c.FindTransaction(input.ID)
+		if err != nil {
+			panic(err)
+		}
+		previousTxs[hex.EncodeToString(previousTx.ID)] = previousTx
+	}
+	return tx.Verify(previousTxs)
 }
 
 func (c *Chain) Iterator() *ChainIterator {
