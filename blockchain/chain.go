@@ -108,7 +108,7 @@ func ContinueChain(address string) *Chain {
 	return &blockchain
 }
 
-func (c *Chain) AddBlock(transactions []*Transaction) {
+func (c *Chain) AddBlock(transactions []*Transaction) *Block {
 	var lastHash []byte
 	if err := c.Database.View(func(txn *badger.Txn) error {
 		item, err := txn.Get([]byte("lh"))
@@ -138,6 +138,8 @@ func (c *Chain) AddBlock(transactions []*Transaction) {
 	}); err != nil {
 		panic(err)
 	}
+
+	return newBlock
 }
 
 func (c *Chain) SignTransaction(tx *Transaction, privateKey ecdsa.PrivateKey) {
@@ -182,8 +184,8 @@ func (c *Chain) FindTransaction(ID []byte) (Transaction, error) {
 	return Transaction{}, errors.New("transaction does not exist")
 }
 
-func (c *Chain) FindUnspentTransactions(publicKeyHash []byte) []Transaction {
-	var unspentTxs []Transaction
+func (c *Chain) FindUTXOs() map[string]TransactionOutputs {
+	UTXOs := make(map[string]TransactionOutputs)
 	spentTxs := make(map[string][]int)
 	iter := c.Iterator()
 
@@ -201,16 +203,14 @@ func (c *Chain) FindUnspentTransactions(publicKeyHash []byte) []Transaction {
 						}
 					}
 				}
-				if out.IsLockedWithKey(publicKeyHash) {
-					unspentTxs = append(unspentTxs, *tx)
-				}
+				outs := UTXOs[txID]
+				outs.Outputs = append(outs.Outputs, out)
+				UTXOs[txID] = outs
 			}
 			if tx.IsCoinbaseTransaction() == false {
 				for _, in := range tx.Inputs {
-					if in.UsesKey(publicKeyHash) {
-						inTxID := hex.EncodeToString(in.ID)
-						spentTxs[inTxID] = append(spentTxs[inTxID], in.Output)
-					}
+					inTxID := hex.EncodeToString(in.ID)
+					spentTxs[inTxID] = append(spentTxs[inTxID], in.Output)
 				}
 			}
 		}
@@ -219,46 +219,7 @@ func (c *Chain) FindUnspentTransactions(publicKeyHash []byte) []Transaction {
 		}
 	}
 
-	return unspentTxs
-}
-
-func (c *Chain) FindUTXO(publicKeyHash []byte) []TransactionOutput {
-	var UTXOs []TransactionOutput
-	unspentTransactions := c.FindUnspentTransactions(publicKeyHash)
-
-	for _, tx := range unspentTransactions {
-		for _, out := range tx.Outputs {
-			if out.IsLockedWithKey(publicKeyHash) {
-				UTXOs = append(UTXOs, out)
-			}
-		}
-	}
-
 	return UTXOs
-}
-
-func (c *Chain) FindSpendableOutputs(publicKeyHash []byte, amount int) (int, map[string][]int) {
-	unspentOuts := make(map[string][]int)
-	unspentTxs := c.FindUnspentTransactions(publicKeyHash)
-	accumulated := 0
-
-Work:
-	for _, tx := range unspentTxs {
-		txID := hex.EncodeToString(tx.ID)
-
-		for outIdx, out := range tx.Outputs {
-			if out.IsLockedWithKey(publicKeyHash) && accumulated < amount {
-				accumulated += out.Value
-				unspentOuts[txID] = append(unspentOuts[txID], outIdx)
-
-				if accumulated >= amount {
-					break Work
-				}
-			}
-		}
-	}
-
-	return accumulated, unspentOuts
 }
 
 func (c *Chain) Iterator() *ChainIterator {

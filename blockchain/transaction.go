@@ -26,24 +26,16 @@ type TransactionOutput struct {
 	PublicKeyHash []byte
 }
 
+type TransactionOutputs struct {
+	Outputs []TransactionOutput
+}
+
 type TransactionInput struct {
 	ID        []byte
 	Output    int
 	Signature []byte
 	PublicKey []byte
 }
-
-// func (tx *Transaction) SetID() {
-// 	var encoded bytes.Buffer
-// 	var hash [64]byte
-
-// 	encoder := gob.NewEncoder(&encoded)
-// 	if err := encoder.Encode(tx); err != nil {
-// 		panic(err)
-// 	}
-// 	hash = sha512.Sum512(encoded.Bytes())
-// 	tx.ID = hash[:]
-// }
 
 func CoinbaseTransaction(to, data string) *Transaction {
 	if data == "" {
@@ -63,7 +55,7 @@ func (tx *Transaction) IsCoinbaseTransaction() bool {
 	return len(tx.Inputs) == 1 && len(tx.Inputs[0].ID) == 0 && tx.Inputs[0].Output == -1
 }
 
-func NewTransaction(from, to string, amount int, chain *Chain) *Transaction {
+func NewTransaction(from, to string, amount int, UTXOs *UTXOSet) *Transaction {
 	var inputs []TransactionInput
 	var outputs []TransactionOutput
 
@@ -74,7 +66,7 @@ func NewTransaction(from, to string, amount int, chain *Chain) *Transaction {
 	w := wallets.GetWallet(from)
 	publicKeyHash := wallet.PublicKeyHash(w.PublicKey)
 
-	acc, validOutputs := chain.FindSpendableOutputs(publicKeyHash, amount)
+	acc, validOutputs := UTXOs.FindSpendableOutputs(publicKeyHash, amount)
 	if acc < amount {
 		panic("Fund error")
 	}
@@ -94,7 +86,7 @@ func NewTransaction(from, to string, amount int, chain *Chain) *Transaction {
 	}
 	tx := Transaction{nil, inputs, outputs}
 	tx.ID = tx.Hash()
-	chain.SignTransaction(&tx, w.PrivateKey)
+	UTXOs.Chain.SignTransaction(&tx, w.PrivateKey)
 
 	return &tx
 }
@@ -234,4 +226,22 @@ func (out *TransactionOutput) Lock(address []byte) {
 
 func (out *TransactionOutput) IsLockedWithKey(publicKeyHash []byte) bool {
 	return bytes.Compare(out.PublicKeyHash, publicKeyHash) == 0
+}
+
+func (outs *TransactionOutputs) Serialize() []byte {
+	var buffer bytes.Buffer
+	encoder := gob.NewEncoder(&buffer)
+	if err := encoder.Encode(outs); err != nil {
+		panic(err)
+	}
+	return buffer.Bytes()
+}
+
+func DeserializeOutputs(data []byte) TransactionOutputs {
+	var outputs TransactionOutputs
+	decoder := gob.NewDecoder(bytes.NewReader(data))
+	if err := decoder.Decode(&outputs); err != nil {
+		panic(err)
+	}
+	return outputs
 }

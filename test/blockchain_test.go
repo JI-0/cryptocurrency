@@ -36,47 +36,51 @@ func TestCreationOfChainAndBlocks(t *testing.T) {
 	//Create chain
 	chain := blockchain.NewChain(string(w0))
 	defer chain.Database.Close()
+	UTXOSet := blockchain.UTXOSet{Chain: chain}
+	UTXOSet.Reindex()
 	//Get balance
 	balance := 0
-	UTXOs := chain.FindUTXO(w0publicKeyHash)
+	UTXOs := UTXOSet.FindUTXO(w0publicKeyHash)
 	for _, out := range UTXOs {
 		balance += out.Value
 	}
 	fmt.Printf("Balance of %s: %d\n", "Tester-0", balance)
 	//Send amount 20
-	tx := blockchain.NewTransaction(w0, w1, 20, chain)
-	chain.AddBlock([]*blockchain.Transaction{tx})
+	tx := blockchain.NewTransaction(w0, w1, 20, &UTXOSet)
+	block := chain.AddBlock([]*blockchain.Transaction{tx})
+	UTXOSet.Update(block)
 	fmt.Println("Sent amount 20")
 	//Get balances
 	//Get balance
 	balance = 0
-	UTXOs = chain.FindUTXO(w0publicKeyHash)
+	UTXOs = UTXOSet.FindUTXO(w0publicKeyHash)
 	for _, out := range UTXOs {
 		balance += out.Value
 	}
 	fmt.Printf("Balance of %s: %d\n", "Tester-0", balance)
 	//Get balance
 	balance = 0
-	UTXOs = chain.FindUTXO(w1publicKeyHash)
+	UTXOs = UTXOSet.FindUTXO(w1publicKeyHash)
 	for _, out := range UTXOs {
 		balance += out.Value
 	}
 	fmt.Printf("Balance of %s: %d\n", "Tester-1", balance)
 	//Send amount 80
-	tx = blockchain.NewTransaction(w0, w1, 80, chain)
-	chain.AddBlock([]*blockchain.Transaction{tx})
+	tx = blockchain.NewTransaction(w0, w1, 80, &UTXOSet)
+	block = chain.AddBlock([]*blockchain.Transaction{tx})
+	UTXOSet.Update(block)
 	fmt.Println("Sent amount 80")
 	//Get balances
 	//Get balance
 	balance = 0
-	UTXOs = chain.FindUTXO(w0publicKeyHash)
+	UTXOs = UTXOSet.FindUTXO(w0publicKeyHash)
 	for _, out := range UTXOs {
 		balance += out.Value
 	}
 	fmt.Printf("Balance of %s: %d\n", "Tester-0", balance)
 	//Get balance
 	balance = 0
-	UTXOs = chain.FindUTXO(w1publicKeyHash)
+	UTXOs = UTXOSet.FindUTXO(w1publicKeyHash)
 	for _, out := range UTXOs {
 		balance += out.Value
 	}
