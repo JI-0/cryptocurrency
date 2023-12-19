@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"bytes"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
@@ -11,7 +12,7 @@ import (
 )
 
 const (
-	checksumLen = 4
+	ChecksumLen = 4
 	version     = byte(0x00)
 )
 
@@ -56,7 +57,7 @@ func PublicKeyHash(publicKey []byte) []byte {
 func CheckSum(payload []byte) []byte {
 	hash1 := sha512.Sum512(payload)
 	hash2 := sha512.Sum512(hash1[:])
-	return hash2[:checksumLen]
+	return hash2[:ChecksumLen]
 }
 
 func (w Wallet) Address() []byte {
@@ -72,4 +73,13 @@ func (w Wallet) Address() []byte {
 	fmt.Printf("Address: %x\n", address)
 
 	return address
+}
+
+func ValidateAddress(address string) bool {
+	publicKeyHash := Base58Decode([]byte(address))
+	actualChecksum := publicKeyHash[len(publicKeyHash)-ChecksumLen:]
+	version := publicKeyHash[0]
+	publicKeyHash = publicKeyHash[1 : len(publicKeyHash)-ChecksumLen]
+	targetChecksum := CheckSum(append([]byte{version}, publicKeyHash...))
+	return bytes.Compare(actualChecksum, targetChecksum) == 0
 }

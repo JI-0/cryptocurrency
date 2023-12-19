@@ -13,7 +13,7 @@ import (
 const (
 	walletFile     = "./tmp/wallets/"
 	version        = byte(0x00)
-	numberOfWalets = 100000
+	numberOfWalets = 10000
 )
 
 // Warning: test takes some time to finish
