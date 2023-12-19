@@ -37,6 +37,8 @@ func (cli *CommandLine) createChain(address string) {
 	}
 	chain := blockchain.NewChain(address)
 	chain.Database.Close()
+	UTXOSet := blockchain.UTXOSet{Chain: chain}
+	UTXOSet.Reindex()
 	fmt.Println("Created chain")
 }
 
