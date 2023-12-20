@@ -67,7 +67,9 @@ func TestCreationOfChainAndBlocks(t *testing.T) {
 	fmt.Printf("Balance of %s: %d\n", "Tester-1", balance)
 	//Send amount 80
 	tx = blockchain.NewTransaction(w0, w1, 80, &UTXOSet)
-	block = chain.AddBlock([]*blockchain.Transaction{tx})
+	cbTx := blockchain.CoinbaseTransaction(w0, "")
+	cbTx0 := blockchain.CoinbaseTransaction(w1, "")
+	block = chain.AddBlock([]*blockchain.Transaction{tx, cbTx, cbTx0})
 	UTXOSet.Update(block)
 	fmt.Println("Sent amount 80")
 	//Get balances
