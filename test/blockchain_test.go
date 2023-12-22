@@ -17,11 +17,10 @@ const (
 // Test creation of chain and POW
 func TestCreationOfChainAndBlocks(t *testing.T) {
 	//Delete files from previous test
+	os.Mkdir("./tmp/", 0700)
+	os.Mkdir(walletFileN, 0700)
 	if err := os.RemoveAll(dbPath); err != nil {
 		t.Fatal("Database file error: ", err)
-	}
-	if err := os.Mkdir(walletFileN, 0700); err != nil {
-		t.Fatal("Cannot make dir: ", err.Error())
 	}
 	entries, err := os.ReadDir(walletFileN)
 	if err != nil {
