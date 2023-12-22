@@ -51,11 +51,14 @@ func TestWalletCreationAndAddressGeneration(t *testing.T) {
 
 func TestWalletCreationAndSavingLoading(t *testing.T) {
 	// Delete save file from previous test
-	if err := os.RemoveAll(walletFile); err != nil {
-		t.Fatal("Wallet file error: ", err)
+	entries, err := os.ReadDir(walletFile)
+	if err != nil {
+		t.Fatal("Cannot read dir")
 	}
-	if err := os.Mkdir(walletFile, 0700); err != nil {
-		t.Fatal("Cannot create dir")
+	for _, entry := range entries {
+		if err := os.Remove(walletFile + entry.Name()); err != nil {
+			t.Fatal("Cannot remove file")
+		}
 	}
 	//Create wallets and load them
 	wallets, err := wallet.NewWallets()

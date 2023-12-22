@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	dbPath = "./tmp/blocks"
-	// walletFileN = "./tmp/wallets/"
+	dbPath      = "./tmp/blocks"
+	walletFileN = "./tmp/wallets/"
 )
 
 // Test creation of chain and POW
@@ -20,11 +20,14 @@ func TestCreationOfChainAndBlocks(t *testing.T) {
 	if err := os.RemoveAll(dbPath); err != nil {
 		t.Fatal("Database file error: ", err)
 	}
-	if err := os.RemoveAll("./tmp/wallets/"); err != nil {
-		t.Fatal("Wallet file error: ", err)
+	entries, err := os.ReadDir(walletFileN)
+	if err != nil {
+		t.Fatal("Cannot read dir")
 	}
-	if err := os.Mkdir("./tmp/wallets/", 0700); err != nil {
-		t.Fatal("Cannot create dir")
+	for _, entry := range entries {
+		if err := os.Remove(walletFileN + entry.Name()); err != nil {
+			t.Fatal("Cannot remove file")
+		}
 	}
 	//Start test
 	//Create wallets
