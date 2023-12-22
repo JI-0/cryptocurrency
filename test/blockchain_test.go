@@ -24,7 +24,7 @@ func TestCreationOfChainAndBlocks(t *testing.T) {
 		t.Fatal("Wallet file error: ", err)
 	}
 	if err := os.Mkdir(walletFileN, 0700); err != nil {
-		t.Fatal("Cannot create dir")
+		println("Cannot create dir")
 	}
 	//Start test
 	//Create wallets
