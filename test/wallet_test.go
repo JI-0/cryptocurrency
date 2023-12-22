@@ -51,7 +51,9 @@ func TestWalletCreationAndAddressGeneration(t *testing.T) {
 
 func TestWalletCreationAndSavingLoading(t *testing.T) {
 	// Delete save file from previous test
-	os.Mkdir(walletFile, 0700)
+	if err := os.Mkdir(walletFile, 0700); err != nil {
+		t.Fatal("Cannot make dir: ", err.Error())
+	}
 	entries, err := os.ReadDir(walletFile)
 	if err != nil {
 		t.Fatal("Cannot read dir")
