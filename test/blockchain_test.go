@@ -20,6 +20,7 @@ func TestCreationOfChainAndBlocks(t *testing.T) {
 	if err := os.RemoveAll(dbPath); err != nil {
 		t.Fatal("Database file error: ", err)
 	}
+	os.Mkdir(walletFileN, 0700)
 	entries, err := os.ReadDir(walletFileN)
 	if err != nil {
 		t.Fatal("Cannot read dir")
