@@ -41,8 +41,6 @@ func TestWalletCreationAndAddressGeneration(t *testing.T) {
 		fullHash := append(versionedHash, checksum...)
 		address := wallet.Base58Encode(fullHash)
 
-		fmt.Printf("Address: %x\n", address)
-
 		if slices.Contains(addresses, string(address)) {
 			t.Fatalf(`Dupplicate wallet addresses`)
 		}
@@ -88,8 +86,8 @@ func TestWalletCreationAndSavingLoading(t *testing.T) {
 		t.Fatal("Private keys do not match")
 	}
 
-	fmt.Printf("Wallet1 public key: %s\n", string(wallets.Wallets[address].PublicKey))
-	fmt.Printf("Wallet2 public key: %s\n", string(wallets1.Wallets[address].PublicKey))
-	fmt.Printf("Wallet1 private key: %s\n", string(privateKeyBuffer))
-	fmt.Printf("Wallet2 private key: %s\n", string(privateKeyBuffer1))
+	// fmt.Printf("Wallet1 public key: %s\n", string(wallets.Wallets[address].PublicKey))
+	// fmt.Printf("Wallet2 public key: %s\n", string(wallets1.Wallets[address].PublicKey))
+	// fmt.Printf("Wallet1 private key: %s\n", string(privateKeyBuffer))
+	// fmt.Printf("Wallet2 private key: %s\n", string(privateKeyBuffer1))
 }
