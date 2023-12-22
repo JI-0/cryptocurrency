@@ -9,7 +9,10 @@ import (
 	"github.com/JI-0/private-cryptocurrency/wallet"
 )
 
-const dbPath = "./tmp/blocks"
+const (
+	dbPath      = "./tmp/blocks"
+	walletFileN = "./tmp/wallets/"
+)
 
 // Test creation of chain and POW
 func TestCreationOfChainAndBlocks(t *testing.T) {
@@ -17,10 +20,10 @@ func TestCreationOfChainAndBlocks(t *testing.T) {
 	if err := os.RemoveAll(dbPath); err != nil {
 		t.Fatal("Database file error: ", err)
 	}
-	if err := os.RemoveAll(walletFile); err != nil {
+	if err := os.RemoveAll(walletFileN); err != nil {
 		t.Fatal("Wallet file error: ", err)
 	}
-	if err := os.Mkdir(walletFile, 0700); err != nil {
+	if err := os.Mkdir(walletFileN, 0700); err != nil {
 		t.Fatal("Cannot create dir")
 	}
 	//Start test
