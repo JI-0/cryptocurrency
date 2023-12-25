@@ -20,6 +20,9 @@ jobs:
       run: |
         go get -v -t -d ./...        
 
+    - name: Build RandomX
+      run: bash build-randomx.sh
+
     - name: Build
       # env:
       #   GOPROXY: "https://proxy.golang.org"

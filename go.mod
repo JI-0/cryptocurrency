@@ -7,6 +7,7 @@ require (
 	github.com/mr-tron/base58 v1.2.0
 	golang.org/x/crypto v0.17.0
 	golang.org/x/exp v0.0.0-20231219180239-dc181d75b848
+	golang.org/x/sys v0.15.0 // indirect
 )
 
 require (
@@ -18,6 +19,5 @@ require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	golang.org/x/net v0.19.0 // indirect
-	golang.org/x/sys v0.15.0 // indirect
 	google.golang.org/protobuf v1.32.0 // indirect
 )
