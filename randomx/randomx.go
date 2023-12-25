@@ -31,6 +31,14 @@ type Dataset *C.randomx_dataset
 
 type VM *C.randomx_vm
 
+func GetFlags() C.randomx_flags {
+	flag := C.randomx_get_flags()
+	// if runtime.GOARCH == "arm64" && runtime.GOOS == "darwin" {
+	// 	flag = flag | FlagSecure
+	// }
+	return flag
+}
+
 func AllocCache(flags ...C.randomx_flags) (Cache, error) {
 	var SumFlag = FlagDefault
 	var cache *C.randomx_cache

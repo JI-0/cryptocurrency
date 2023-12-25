@@ -50,18 +50,122 @@ func TestAllocDataset(t *testing.T) {
 	randomx.ReleaseCache(cache)
 }
 
-func TestCreateVM(t *testing.T) {
+// func TestCreateVM(t *testing.T) {
+// 	var tp = testPairs[0]
+
+// 	t.Log("Allocate cache")
+// 	cache, _ := randomx.AllocCache(randomx.FlagDefault)
+
+// 	t.Log("Initialize cache")
+// 	seed := tp[0]
+// 	randomx.InitCache(cache, seed)
+
+// 	t.Log("Allocate dataset")
+// 	ds, _ := randomx.AllocDataset(randomx.FlagDefault)
+
+// 	t.Log("Initialize dataset")
+// 	count := randomx.DatasetItemCount()
+// 	t.Log("  -- dataset item count:", count)
+// 	var wg sync.WaitGroup
+// 	var workerNum = uint32(runtime.NumCPU())
+// 	t.Logf("  -- initializing with %d workers", workerNum)
+// 	for i := uint32(0); i < workerNum; i++ {
+// 		wg.Add(1)
+// 		a := (count * i) / workerNum
+// 		b := (count * (i + 1)) / workerNum
+// 		go func() {
+// 			defer wg.Done()
+// 			randomx.InitDataset(ds, cache, a, b-a)
+// 		}()
+// 	}
+// 	wg.Wait()
+
+// 	t.Log("Create VM")
+// 	vm, err := randomx.CreateVM(cache, ds, randomx.FlagDefault)
+// 	if err != nil {
+// 		t.Log(err)
+// 		t.Fail()
+// 	}
+
+// 	var hashCorrect = make([]byte, hex.DecodedLen(len(tp[2])))
+// 	_, err = hex.Decode(hashCorrect, tp[2])
+// 	if err != nil {
+// 		t.Log(err)
+// 		t.Fail()
+// 	}
+
+// 	t.Log("Compute hash and check result")
+// 	hash := randomx.CalculateHash(vm, tp[1])
+// 	if !bytes.Equal(hash, hashCorrect) {
+// 		t.Logf("answer is incorrect: %x, %x", hash, hashCorrect)
+// 		t.Fail()
+// 	}
+// }
+
+// func TestCreateFullMEMVM(t *testing.T) {
+// 	var tp = testPairs[0]
+
+// 	t.Log("Allocate cache")
+// 	cache, _ := randomx.AllocCache(randomx.FlagFullMEM)
+
+// 	t.Log("Initialize cache")
+// 	seed := tp[0]
+// 	randomx.InitCache(cache, seed)
+
+// 	t.Log("Allocate dataset")
+// 	ds, _ := randomx.AllocDataset(randomx.FlagFullMEM)
+
+// 	t.Log("Initialize dataset")
+// 	count := randomx.DatasetItemCount()
+// 	t.Log("  -- dataset item count:", count)
+// 	var wg sync.WaitGroup
+// 	var workerNum = uint32(runtime.NumCPU())
+// 	t.Logf("  -- initializing with %d workers", workerNum)
+// 	for i := uint32(0); i < workerNum; i++ {
+// 		wg.Add(1)
+// 		a := (count * i) / workerNum
+// 		b := (count * (i + 1)) / workerNum
+// 		go func() {
+// 			defer wg.Done()
+// 			randomx.InitDataset(ds, cache, a, b-a)
+// 		}()
+// 	}
+// 	wg.Wait()
+
+// 	t.Log("Create VM")
+// 	vm, err := randomx.CreateVM(cache, ds, randomx.FlagFullMEM)
+// 	if err != nil {
+// 		t.Log(err)
+// 		t.Fail()
+// 	}
+
+// 	var hashCorrect = make([]byte, hex.DecodedLen(len(tp[2])))
+// 	_, err = hex.Decode(hashCorrect, tp[2])
+// 	if err != nil {
+// 		t.Log(err)
+// 		t.Fail()
+// 	}
+
+// 	t.Log("Compute hash and check result")
+// 	hash := randomx.CalculateHash(vm, tp[1])
+// 	if !bytes.Equal(hash, hashCorrect) {
+// 		t.Logf("answer is incorrect: %x, %x", hash, hashCorrect)
+// 		t.Fail()
+// 	}
+// }
+
+func TestCreateRecommendedFlagVM(t *testing.T) {
 	var tp = testPairs[0]
 
 	t.Log("Allocate cache")
-	cache, _ := randomx.AllocCache(randomx.FlagDefault)
+	cache, _ := randomx.AllocCache(randomx.GetFlags())
 
 	t.Log("Initialize cache")
 	seed := tp[0]
 	randomx.InitCache(cache, seed)
 
 	t.Log("Allocate dataset")
-	ds, _ := randomx.AllocDataset(randomx.FlagDefault)
+	ds, _ := randomx.AllocDataset(randomx.GetFlags())
 
 	t.Log("Initialize dataset")
 	count := randomx.DatasetItemCount()
@@ -81,7 +185,7 @@ func TestCreateVM(t *testing.T) {
 	wg.Wait()
 
 	t.Log("Create VM")
-	vm, err := randomx.CreateVM(cache, ds, randomx.FlagDefault)
+	vm, err := randomx.CreateVM(cache, ds, randomx.GetFlags())
 	if err != nil {
 		t.Log(err)
 		t.Fail()
