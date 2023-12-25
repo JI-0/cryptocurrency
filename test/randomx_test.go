@@ -158,14 +158,14 @@ func TestCreateRecommendedFlagVM(t *testing.T) {
 	var tp = testPairs[0]
 
 	t.Log("Allocate cache")
-	cache, _ := randomx.AllocCache(randomx.GetFlags())
+	cache, _ := randomx.AllocCache(randomx.GetFlags(), randomx.FlagFullMEM)
 
 	t.Log("Initialize cache")
 	seed := tp[0]
 	randomx.InitCache(cache, seed)
 
 	t.Log("Allocate dataset")
-	ds, _ := randomx.AllocDataset(randomx.GetFlags())
+	ds, _ := randomx.AllocDataset(randomx.GetFlags(), randomx.FlagFullMEM)
 
 	t.Log("Initialize dataset")
 	count := randomx.DatasetItemCount()
@@ -185,7 +185,7 @@ func TestCreateRecommendedFlagVM(t *testing.T) {
 	wg.Wait()
 
 	t.Log("Create VM")
-	vm, err := randomx.CreateVM(cache, ds, randomx.GetFlags())
+	vm, err := randomx.CreateVM(cache, ds, randomx.GetFlags(), randomx.FlagFullMEM)
 	if err != nil {
 		t.Log(err)
 		t.Fail()
