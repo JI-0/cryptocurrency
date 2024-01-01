@@ -105,14 +105,9 @@ func (tx Transaction) Serialize() []byte {
 }
 
 func (tx *Transaction) Hash() []byte {
-
-	// H := sha3.NewShake256()
 	var hash [64]byte
 	txCopy := *tx
 	txCopy.ID = []byte{}
-	// _, _ = H.Write(txCopy.Serialize())
-	// _, _ = H.Read(hash[:])
-	// H.Reset()
 	hash = sha512.Sum512(txCopy.Serialize())
 	return hash[:]
 }

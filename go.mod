@@ -12,7 +12,7 @@ require (
 
 require (
 	github.com/AndreasBriese/bbloom v0.0.0-20190825152654-46b345b51c96 // indirect
-	github.com/JI-0/circl v0.0.0-20240101083957-33a0dbb56ebd // indirect
+	github.com/JI-0/circl v0.0.0-20240101095028-dfc0bd12359d
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/dgraph-io/ristretto v0.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
