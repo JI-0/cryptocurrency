@@ -105,6 +105,7 @@ func (tx Transaction) Serialize() []byte {
 }
 
 func (tx *Transaction) Hash() []byte {
+
 	// H := sha3.NewShake256()
 	var hash [64]byte
 	txCopy := *tx
