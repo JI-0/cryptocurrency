@@ -9,7 +9,7 @@ import (
 	"math/big"
 )
 
-const difficulty = 12
+const difficulty = 4
 
 type ProofOfWork struct {
 	Block  *Block
@@ -42,7 +42,7 @@ func (pow *ProofOfWork) Run() (int, []byte) {
 	for nonce < math.MaxInt64 {
 		data := pow.InitData(nonce)
 		hash = sha512.Sum512(data)
-		// fmt.Printf("\r%x", hash)
+		fmt.Printf("\r%x", hash)
 
 		intHash.SetBytes(hash[:])
 

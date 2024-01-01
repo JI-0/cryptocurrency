@@ -54,6 +54,7 @@ func PublicKeyHash(publicKey []byte) []byte {
 	return publicRipeMD
 }
 
+// CheckSum to verify address validity
 func CheckSum(payload []byte) []byte {
 	hash1 := sha512.Sum512(payload)
 	hash2 := sha512.Sum512(hash1[:])
