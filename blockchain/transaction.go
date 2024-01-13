@@ -59,15 +59,10 @@ func (tx *Transaction) IsCoinbaseTransaction() bool {
 	return len(tx.Inputs) == 1 && len(tx.Inputs[0].ID) == 0 && tx.Inputs[0].Output == -1
 }
 
-func NewTransaction(from, to string, amount int, UTXOs *UTXOSet) *Transaction {
+func NewTransaction(w *wallet.Wallet, to string, amount int, UTXOs *UTXOSet) *Transaction {
 	var inputs []TransactionInput
 	var outputs []TransactionOutput
 
-	wallets, err := wallet.NewWallets()
-	if err != nil {
-		panic(err)
-	}
-	w := wallets.GetWallet(from)
 	publicKeyHash := wallet.PublicKeyHash(w.PublicKey)
 
 	acc, validOutputs := UTXOs.FindSpendableOutputs(publicKeyHash, amount)
@@ -86,22 +81,13 @@ func NewTransaction(from, to string, amount int, UTXOs *UTXOSet) *Transaction {
 	}
 	outputs = append(outputs, *NewTxOutput(amount, to))
 	if acc > amount {
-		outputs = append(outputs, *NewTxOutput(acc-amount, from))
+		outputs = append(outputs, *NewTxOutput(acc-amount, string(w.Address())))
 	}
 	tx := Transaction{nil, inputs, outputs}
 	tx.ID = tx.Hash()
 	UTXOs.Chain.SignTransaction(&tx, w.PrivateKey)
 
 	return &tx
-}
-
-func (tx Transaction) Serialize() []byte {
-	var encoded bytes.Buffer
-	encoder := gob.NewEncoder(&encoded)
-	if err := encoder.Encode(tx); err != nil {
-		panic(err)
-	}
-	return encoded.Bytes()
 }
 
 func (tx *Transaction) Hash() []byte {
@@ -207,6 +193,25 @@ func (tx Transaction) String() string {
 		lines = append(lines, fmt.Sprintf("			PublicKeyHash: %x", output.PublicKeyHash))
 	}
 	return strings.Join(lines, "\n")
+}
+
+func (tx Transaction) Serialize() []byte {
+	var encoded bytes.Buffer
+	encoder := gob.NewEncoder(&encoded)
+	if err := encoder.Encode(tx); err != nil {
+		panic(err)
+	}
+	return encoded.Bytes()
+}
+
+func DeserializeTransaction(data []byte) Transaction {
+	var transaction Transaction
+
+	decoder := gob.NewDecoder(bytes.NewReader(data))
+	if err := decoder.Decode(&transaction); err != nil {
+		panic(err)
+	}
+	return transaction
 }
 
 // Transaction input

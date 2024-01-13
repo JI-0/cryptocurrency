@@ -6,19 +6,20 @@ require (
 	github.com/dgraph-io/badger v1.6.2
 	github.com/mr-tron/base58 v1.2.0
 	golang.org/x/crypto v0.17.0
-	golang.org/x/exp v0.0.0-20231226003508-02704c960a9b
-	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/exp v0.0.0-20240103183307-be819d1f06fc
+	golang.org/x/sys v0.16.0 // indirect
 )
 
 require (
 	github.com/AndreasBriese/bbloom v0.0.0-20190825152654-46b345b51c96 // indirect
-	github.com/JI-0/circl v0.0.0-20240101095028-dfc0bd12359d
+	github.com/JI-0/circl-ed448 v0.0.0-20240101100554-5e582afd158e // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/dgraph-io/ristretto v0.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/golang/glog v1.2.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/vrecan/death/v3 v3.0.3 // indirect
 	golang.org/x/net v0.19.0 // indirect
 	google.golang.org/protobuf v1.32.0 // indirect
 )

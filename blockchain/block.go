@@ -3,17 +3,20 @@ package blockchain
 import (
 	"bytes"
 	"encoding/gob"
+	"time"
 )
 
 type Block struct {
+	Timestamp    int64
 	Hash         []byte
 	Transactions []*Transaction
 	PrevHash     []byte
+	Height       int
 	Nonce        int
 }
 
-func NewBlock(txs []*Transaction, prevHash []byte) *Block {
-	block := &Block{[]byte{}, txs, prevHash, 0}
+func NewBlock(txs []*Transaction, prevHash []byte, height int) *Block {
+	block := &Block{time.Now().Unix(), []byte{}, txs, prevHash, height, 0}
 	pow := NewProof(block)
 	nonce, hash := pow.Run()
 

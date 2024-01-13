@@ -63,14 +63,14 @@ func TestWalletCreationAndSavingLoading(t *testing.T) {
 		}
 	}
 	//Create wallets and load them
-	wallets, err := wallet.NewWallets()
+	wallets, err := wallet.NewWallets(walletFile)
 	if err != nil {
 		t.Fatal(err)
 	}
 	address := wallets.AddWallet()
-	wallets.Save()
+	wallets.Save(walletFile)
 	println("New address: %s", address)
-	wallets1, err := wallet.NewWallets()
+	wallets1, err := wallet.NewWallets(walletFile)
 	if err != nil {
 		t.Fatal(err)
 	}

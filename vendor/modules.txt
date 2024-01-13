@@ -1,16 +1,8 @@
 # github.com/AndreasBriese/bbloom v0.0.0-20190825152654-46b345b51c96
 ## explicit
 github.com/AndreasBriese/bbloom
-# github.com/JI-0/circl v0.0.0-20240101095028-dfc0bd12359d
+# github.com/JI-0/circl-ed448 v0.0.0-20240101100554-5e582afd158e
 ## explicit; go 1.19
-github.com/JI-0/circl/ecc/goldilocks
-github.com/JI-0/circl/internal/conv
-github.com/JI-0/circl/internal/sha3
-github.com/JI-0/circl/math
-github.com/JI-0/circl/math/fp448
-github.com/JI-0/circl/math/mlsbset
-github.com/JI-0/circl/sign
-github.com/JI-0/circl/sign/ed448
 # github.com/cespare/xxhash/v2 v2.2.0
 ## explicit; go 1.11
 github.com/cespare/xxhash/v2
@@ -44,10 +36,13 @@ github.com/mr-tron/base58
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
+# github.com/vrecan/death/v3 v3.0.3
+## explicit; go 1.14
+github.com/vrecan/death/v3
 # golang.org/x/crypto v0.17.0
 ## explicit; go 1.18
 golang.org/x/crypto/ripemd160
-# golang.org/x/exp v0.0.0-20231226003508-02704c960a9b
+# golang.org/x/exp v0.0.0-20240103183307-be819d1f06fc
 ## explicit; go 1.20
 golang.org/x/exp/constraints
 golang.org/x/exp/slices
@@ -55,9 +50,8 @@ golang.org/x/exp/slices
 ## explicit; go 1.18
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
-# golang.org/x/sys v0.15.0
+# golang.org/x/sys v0.16.0
 ## explicit; go 1.18
-golang.org/x/sys/cpu
 golang.org/x/sys/unix
 # google.golang.org/protobuf v1.32.0
 ## explicit; go 1.17
