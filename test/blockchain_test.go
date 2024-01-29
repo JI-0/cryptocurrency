@@ -10,37 +10,37 @@ import (
 )
 
 const (
-	dbPath      = "./tmp/blocks"
-	walletFileN = "./tmp/wallets/"
+	dbPath = "./tmp/blocks_test"
 )
 
 // Test creation of chain and POW
 func TestCreationOfChainAndBlocks(t *testing.T) {
 	//Delete files from previous test
 	os.Mkdir("./tmp/", 0700)
-	os.Mkdir(walletFileN, 0700)
+	os.Mkdir("./tmp/wallets", 0700)
 	if err := os.RemoveAll(dbPath); err != nil {
 		t.Fatal("Database file error: ", err)
 	}
-	entries, err := os.ReadDir(walletFileN)
+	os.Mkdir(dbPath, 0700)
+	entries, err := os.ReadDir("./tmp/wallets")
 	if err != nil {
 		t.Fatal("Cannot read dir")
 	}
 	for _, entry := range entries {
-		if err := os.Remove(walletFileN + entry.Name()); err != nil {
+		if err := os.Remove("./tmp/wallets/" + entry.Name()); err != nil {
 			t.Fatal("Cannot remove file")
 		}
 	}
 	//Start test
 	//Create wallets
-	wallets, _ := wallet.NewWallets(walletFileN)
+	wallets, _ := wallet.NewWallets()
 	w0 := wallets.AddWallet()
 	w0publicKeyHash := wallet.Base58Decode([]byte(w0))
 	w0publicKeyHash = w0publicKeyHash[1 : len(w0publicKeyHash)-wallet.ChecksumLen]
 	w1 := wallets.AddWallet()
 	w1publicKeyHash := wallet.Base58Decode([]byte(w1))
 	w1publicKeyHash = w1publicKeyHash[1 : len(w1publicKeyHash)-wallet.ChecksumLen]
-	wallets.Save(walletFileN)
+	wallets.Save()
 	//Create chain
 	chain := blockchain.NewChain(string(w0), "test")
 	defer chain.Database.Close()

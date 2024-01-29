@@ -76,14 +76,14 @@ func (cli *CommandLine) reindexUTXOSet(nodeID string) {
 }
 
 func (cli *CommandLine) createWallet(nodeID string) {
-	wallets, _ := wallet.NewWallets(nodeID)
+	wallets, _ := wallet.NewWallets()
 	address := wallets.AddWallet()
-	wallets.Save(nodeID)
+	wallets.Save()
 	println("New address: %s", address)
 }
 
 func (cli *CommandLine) listWallets(nodeID string) {
-	wallets, _ := wallet.NewWallets(nodeID)
+	wallets, _ := wallet.NewWallets()
 	addresses := wallets.GetAllAddresses()
 	for _, address := range addresses {
 		println(address)
@@ -117,7 +117,7 @@ func (cli *CommandLine) send(from, to string, amount int, nodeID string, mine bo
 	defer chain.Database.Close()
 	UTXOSet := blockchain.UTXOSet{Chain: chain}
 
-	wallets, err := wallet.NewWallets(nodeID)
+	wallets, err := wallet.NewWallets()
 	if err != nil {
 		panic(err)
 	}

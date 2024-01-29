@@ -2,21 +2,20 @@ package wallet
 
 import (
 	"crypto/x509"
-	"fmt"
 	"os"
 	"strings"
 )
 
-const walletsFile = "./tmp/wallets_%s"
+const walletsFolder = "./tmp/wallets/"
 
 type Wallets struct {
 	Wallets map[string]*Wallet
 }
 
-func NewWallets(path string) (*Wallets, error) {
+func NewWallets() (*Wallets, error) {
 	wallets := Wallets{}
 	wallets.Wallets = make(map[string]*Wallet)
-	err := wallets.Load(path)
+	err := wallets.Load()
 	return &wallets, err
 }
 
@@ -39,25 +38,23 @@ func (ws *Wallets) GetAllAddresses() []string {
 	return addresses
 }
 
-func (ws *Wallets) Save(path string) {
-	filePath := fmt.Sprintf(walletsFile, path)
+func (ws *Wallets) Save() {
 	for address, wallet := range ws.Wallets {
 		privateKeyBuffer, err := x509.MarshalECPrivateKey(&wallet.PrivateKey)
 		if err != nil {
 			panic(err)
 		}
-		if err := os.WriteFile(filePath+address+".priv", privateKeyBuffer, 0644); err != nil {
+		if err := os.WriteFile(walletsFolder+address+".priv", privateKeyBuffer, 0644); err != nil {
 			panic(err)
 		}
-		if err := os.WriteFile(filePath+address+".pub", wallet.PublicKey, 0644); err != nil {
+		if err := os.WriteFile(walletsFolder+address+".pub", wallet.PublicKey, 0644); err != nil {
 			panic(err)
 		}
 	}
 }
 
-func (ws *Wallets) Load(path string) error {
-	filePath := fmt.Sprintf(walletsFile, path)
-	files, err := os.ReadDir(filePath)
+func (ws *Wallets) Load() error {
+	files, err := os.ReadDir(walletsFolder)
 	if err != nil {
 		return err
 	}
@@ -66,7 +63,7 @@ func (ws *Wallets) Load(path string) error {
 		if strings.Contains(name, ".priv") {
 			address := name[:strings.IndexByte(name, '.')]
 			println("HERE", address)
-			privateKeyBuffer, err := os.ReadFile(filePath + address + ".priv")
+			privateKeyBuffer, err := os.ReadFile(walletsFolder + address + ".priv")
 			if err != nil {
 				println("CRASH1", err.Error())
 				continue
@@ -76,7 +73,7 @@ func (ws *Wallets) Load(path string) error {
 				println("CRASH2", err.Error())
 				continue
 			}
-			publicKey, err := os.ReadFile(filePath + address + ".pub")
+			publicKey, err := os.ReadFile(walletsFolder + address + ".pub")
 			if err != nil {
 				println("CRASH3", err.Error())
 				continue

@@ -11,7 +11,6 @@ import (
 )
 
 const (
-	walletFile     = "./tmp/wallets/"
 	version        = byte(0x00)
 	numberOfWalets = 10000
 )
@@ -52,25 +51,25 @@ func TestWalletCreationAndAddressGeneration(t *testing.T) {
 func TestWalletCreationAndSavingLoading(t *testing.T) {
 	// Delete save file from previous test
 	os.Mkdir("./tmp/", 0700)
-	os.Mkdir(walletFile, 0700)
-	entries, err := os.ReadDir(walletFile)
+	os.Mkdir("./tmp/wallets/", 0700)
+	entries, err := os.ReadDir("./tmp/wallets/")
 	if err != nil {
 		t.Fatal("Cannot read dir")
 	}
 	for _, entry := range entries {
-		if err := os.Remove(walletFile + entry.Name()); err != nil {
+		if err := os.Remove("./tmp/wallets/" + entry.Name()); err != nil {
 			t.Fatal("Cannot remove file")
 		}
 	}
 	//Create wallets and load them
-	wallets, err := wallet.NewWallets(walletFile)
+	wallets, err := wallet.NewWallets()
 	if err != nil {
 		t.Fatal(err)
 	}
 	address := wallets.AddWallet()
-	wallets.Save(walletFile)
+	wallets.Save()
 	println("New address: %s", address)
-	wallets1, err := wallet.NewWallets(walletFile)
+	wallets1, err := wallet.NewWallets()
 	if err != nil {
 		t.Fatal(err)
 	}

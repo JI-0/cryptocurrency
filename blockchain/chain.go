@@ -68,7 +68,7 @@ func NewChain(address, path string) *Chain {
 	}
 
 	var lastHash []byte
-	opts := badger.DefaultOptions(dbPath)
+	opts := badger.DefaultOptions(path)
 
 	db, err := DBOpen(path, opts)
 	if err != nil {
@@ -106,7 +106,7 @@ func ContinueChain(path string) *Chain {
 	}
 
 	var lastHash []byte
-	opts := badger.DefaultOptions(dbPath)
+	opts := badger.DefaultOptions(path)
 
 	db, err := DBOpen(path, opts)
 	if err != nil {
