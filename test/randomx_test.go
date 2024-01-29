@@ -15,7 +15,7 @@ var testPairs = [][][]byte{
 	{
 		[]byte("test key 000"),
 		[]byte("This is a test"),
-		[]byte("639183aae1bf4c9a35884cb46b09cad9175f04efd7684e7262a0ac1c2f0b4e3f"), //"c90f60ba2ebed5c7404e035853d90c3f8416b303125ca2e05dee529bb35df627"),
+		[]byte("bc2bcbb0f927bac40faaf98a468f4de5e81b9395ba6c970634abb4d7b1cb007b"),
 	},
 }
 
@@ -103,7 +103,7 @@ func TestCreateVM(t *testing.T) {
 }
 
 func TestCreateRecommendedFlagVM(t *testing.T) {
-	flags := randomx.GetFlags() //randomx.GetFlags() //| randomx.FlagFullMEM
+	flags := randomx.GetFlags() | randomx.FlagFullMEM
 	t.Log("Flags: ", flags)
 
 	var tp = testPairs[0]

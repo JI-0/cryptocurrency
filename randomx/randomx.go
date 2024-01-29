@@ -7,6 +7,7 @@ package randomx
 import "C"
 import (
 	"errors"
+	"runtime"
 	"unsafe"
 )
 
@@ -33,9 +34,9 @@ type VM *C.randomx_vm
 
 func GetFlags() C.randomx_flags {
 	flag := C.randomx_get_flags()
-	// if runtime.GOARCH == "arm64" && runtime.GOOS == "darwin" {
-	// 	flag = flag | FlagSecure
-	// }
+	if runtime.GOARCH == "arm64" && runtime.GOOS == "darwin" {
+		flag = flag | FlagSecure
+	}
 	return flag
 }
 
