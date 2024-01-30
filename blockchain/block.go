@@ -15,10 +15,11 @@ type Block struct {
 	Nonce        int
 }
 
-func NewBlock(txs []*Transaction, prevHash []byte, height int) *Block {
+func NewBlock(c *Chain, txs []*Transaction, prevHash []byte, height int) *Block {
 	block := &Block{time.Now().Unix(), []byte{}, txs, prevHash, height, 0}
-	pow := NewProof(block)
+	pow := NewProof(c, block, true)
 	nonce, hash := pow.Run()
+	pow.Destroy()
 
 	block.Hash = hash
 	block.Nonce = nonce

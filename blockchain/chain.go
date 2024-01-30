@@ -24,7 +24,7 @@ type Chain struct {
 }
 
 func Genesis(coinbase *Transaction) *Block {
-	return NewBlock([]*Transaction{coinbase}, []byte{}, 0)
+	return NewBlock(nil, []*Transaction{coinbase}, []byte{}, 0)
 }
 
 func DBExists(path string) bool {
@@ -68,7 +68,7 @@ func NewChain(address, path string) *Chain {
 	}
 
 	var lastHash []byte
-	opts := badger.DefaultOptions(path)
+	opts := badger.DefaultOptions(dbPath)
 
 	db, err := DBOpen(path, opts)
 	if err != nil {
@@ -106,7 +106,7 @@ func ContinueChain(path string) *Chain {
 	}
 
 	var lastHash []byte
-	opts := badger.DefaultOptions(path)
+	opts := badger.DefaultOptions(dbPath)
 
 	db, err := DBOpen(path, opts)
 	if err != nil {
@@ -257,7 +257,7 @@ func (c *Chain) MineBlock(transactions []*Transaction) *Block {
 		panic(err)
 	}
 
-	newBlock := NewBlock(transactions, lastHash, lastHeight+1)
+	newBlock := NewBlock(c, transactions, lastHash, lastHeight+1)
 
 	if err := c.Database.Update(func(txn *badger.Txn) error {
 		if err := txn.Set(newBlock.Hash, newBlock.Serialize()); err != nil {

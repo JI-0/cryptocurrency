@@ -105,10 +105,11 @@ func TestCreationOfChainAndBlocks(t *testing.T) {
 		// fmt.Printf("Data: %s\n", block.Transactions)
 		fmt.Printf("Hash: %x\n", block.Hash)
 
-		pow := blockchain.NewProof(block)
+		pow := blockchain.NewProof(chain, block, true)
 		if !pow.Validate() {
 			t.Fatalf(`Proof of work returned invalid`)
 		}
+		pow.Destroy()
 
 		if len(block.PrevHash) == 0 {
 			break
