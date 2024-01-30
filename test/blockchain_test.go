@@ -16,21 +16,13 @@ const (
 // Test creation of chain and POW
 func TestCreationOfChainAndBlocks(t *testing.T) {
 	//Delete files from previous test
+	os.RemoveAll("./tmp")
 	os.Mkdir("./tmp/", 0700)
 	os.Mkdir("./tmp/wallets", 0700)
 	if err := os.RemoveAll(dbPath); err != nil {
 		t.Fatal("Database file error: ", err)
 	}
 	os.Mkdir(dbPath, 0700)
-	entries, err := os.ReadDir("./tmp/wallets")
-	if err != nil {
-		t.Fatal("Cannot read dir")
-	}
-	for _, entry := range entries {
-		if err := os.Remove("./tmp/wallets/" + entry.Name()); err != nil {
-			t.Fatal("Cannot remove file")
-		}
-	}
 	//Start test
 	//Create wallets
 	wallets, _ := wallet.NewWallets()
