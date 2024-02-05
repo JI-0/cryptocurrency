@@ -1,3 +1,4 @@
 tmp*
 randomx/lib/*
 randomx/RandomX
+keys/*.priv

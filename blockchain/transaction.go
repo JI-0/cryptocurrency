@@ -10,9 +10,11 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math/big"
+	"os"
 	"strings"
 
 	"github.com/JI-0/private-cryptocurrency/wallet"
+	"github.com/cloudflare/circl/sign/ed448"
 )
 
 type Transaction struct {
@@ -46,7 +48,13 @@ func CoinbaseTransaction(to, data string) *Transaction {
 		data = fmt.Sprintf("%x", randData)
 	}
 
-	txin := TransactionInput{[]byte{}, -1, nil, []byte(data)}
+	hash := sha512.Sum512([]byte(data))
+	priv, err := os.ReadFile("keys/master_ed448.priv")
+	if err != nil {
+		panic(err)
+	}
+	signiture := ed448.Sign(priv, hash[:], "")
+	txin := TransactionInput{hash[:], -1, signiture, nil}
 	txout := NewTxOutput(100, to)
 
 	transaction := Transaction{nil, []TransactionInput{txin}, []TransactionOutput{*txout}}
@@ -56,7 +64,14 @@ func CoinbaseTransaction(to, data string) *Transaction {
 }
 
 func (tx *Transaction) IsCoinbaseTransaction() bool {
-	return len(tx.Inputs) == 1 && len(tx.Inputs[0].ID) == 0 && tx.Inputs[0].Output == -1
+	if len(tx.Inputs) == 1 && tx.Inputs[0].Output < 0 {
+		pub, err := os.ReadFile("keys/master_ed448.pub")
+		if err != nil {
+			panic(err)
+		}
+		return ed448.Verify(pub, tx.Inputs[0].ID, tx.Inputs[0].Signature, "")
+	}
+	return false
 }
 
 func NewTransaction(w *wallet.Wallet, to string, amount int, UTXOs *UTXOSet) *Transaction {
